@@ -1,6 +1,6 @@
 <?php
 /*
-* Plugin Name: Plugin Name
+* Plugin Name: Doors of Durin
 * Plugin URI: https://github.com/johnie/plugin-boilerplate
 * Description:
 * Version: 0.0.1
@@ -35,9 +35,9 @@ THE SOFTWARE.
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( 'PluginName' ) ) {
+if ( ! class_exists( 'DoorsOfDurin' ) ) {
 
-  class PluginName {
+  class DoorsOfDurin {
 
     private static $instance;
 
@@ -96,9 +96,57 @@ if ( ! class_exists( 'PluginName' ) ) {
 
     private function setup_actions() {
 
-
+			add_action( 'wp_enqueue_scripts', array( $this, 'doors_of_durin' ), 999 );
+    	add_action( 'wp_ajax_moria_enter', array( $this, 'speak_friend_and_enter' ) );
+			add_action( 'wp_ajax_nopriv_moria_enter', array( $this, 'speak_friend_and_enter' ) );
 
     }
+
+    private function constants() {
+      if ( ! defined( 'DOORSOFDURIN_PLUGIN_URL' ) ) {
+        $plugin_url = plugin_dir_url( __FILE__ );
+        define( 'DOORSOFDURIN_PLUGIN_URL', $plugin_url );
+      }
+    }
+
+    function moria_excerpt_more( $more ){
+			// Get the current post
+			global $post;
+
+			// Create the new link
+			$output  = "&hellip;";
+			$output .= '<br />';
+			$output .= '<a class="moria-read-more" data-post_id="'. $post->ID .'" href="'. get_permalink($post->ID) . '" title="Read ' . get_the_title($post->ID).'">';
+			$output .= "Read more";
+			$output .= '</a>';
+
+			// Return it to the original function
+			return $output;
+		}
+
+    function doors_of_durin() {
+    	// Register our js to load in the footer
+			// Tell WP to make sure jQuery is also loaded first
+			wp_register_script( 'moria', DOORSOFDURIN_PLUGIN_URL . 'js/moria.js', array( 'jquery' ), '', true );
+
+		  $args = array(
+		    'ajaxurl' => admin_url( 'admin-ajax.php' ),
+		    'nonce'   => wp_create_nonce( 'moria_riddle' )
+		  );
+		  wp_localize_script( 'moria', 'durin', $args );
+		}
+
+    function speak_friend_and_enter() {
+		  if ( empty( $_POST['post_id'] ) || empty( $_POST['nonce'] ) ) die('empty');
+		  // Verify the nonce
+		  if (! wp_verify_nonce( $_POST['nonce'], 'moria_riddle' ) ) die('bad nonce bad');
+		  // Get the post
+		  $post = get_post( $_POST['post_id'] );
+		  // Apply the_content filters to add proper formatting
+		  echo apply_filters( 'the_content', $post->post_content );
+		  // Die, so that admin-ajax.php doesn't return false
+		  die;
+		}
 
     /**
  		 * Initiate the globals
@@ -107,9 +155,9 @@ if ( ! class_exists( 'PluginName' ) ) {
  		 */
 
     private function setup_globals() {
-      $this->tag = 'pluginname';
-      $this->name = 'Plugin Name';
-      $this->description = 'Simple WordPress plugin description"';
+      $this->tag = 'doorsofdurin';
+      $this->name = 'Doors of Durin';
+      $this->description = 'Speak friend and enter the gates of Moria';
       $this->version = '1.0.0';
     }
 
@@ -117,10 +165,10 @@ if ( ! class_exists( 'PluginName' ) ) {
 
 }
 
-if ( !function_exists( 'pluginname' ) ) {
-  function pluginname() {
-    return PluginName::instance();
+if ( !function_exists( 'doorsofdurin' ) ) {
+  function doorsofdurin() {
+    return DoorsOfDurin::instance();
   }
 }
 
-add_action( 'plugins_loaded', 'pluginname' );
+add_action( 'plugins_loaded', 'doorsofdurin' );

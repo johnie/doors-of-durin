@@ -1,11 +1,11 @@
-# plugin-boilerplate
+# Doors of Durin
 
-> Text about the plugin
+> Speak friend and enter the gates of Moria
 
 ## Install
 
 ```sh
-$ composer require johnie/plugin-boilerplate
+$ composer require johnie/doors-of-durin
 ```
 
 ## Usage
