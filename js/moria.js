@@ -7,7 +7,7 @@
       this.mellon();
     },
     mellon: function() {
-      $(".search-read-more").on('click', function(e) {
+      $(".moria-read-more").on('click', function(e) {
         
         e.preventDefault();
 
