@@ -96,6 +96,7 @@ if ( ! class_exists( 'DoorsOfDurin' ) ) {
 
     private function setup_actions() {
 
+    	add_filter( 'excerpt_more', array( $this, 'moria_excerpt_more' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'doors_of_durin' ), 999 );
     	add_action( 'wp_ajax_moria_enter', array( $this, 'speak_friend_and_enter' ) );
 			add_action( 'wp_ajax_nopriv_moria_enter', array( $this, 'speak_friend_and_enter' ) );
@@ -116,7 +117,7 @@ if ( ! class_exists( 'DoorsOfDurin' ) ) {
 			// Create the new link
 			$output  = "&hellip;";
 			$output .= '<br />';
-			$output .= '<a class="moria-read-more" data-post_id="'. $post->ID .'" href="'. get_permalink($post->ID) . '" title="Read ' . get_the_title($post->ID).'">';
+			$output .= '<a class="moria-read-more" data-post-id="'. $post->ID .'" href="'. get_permalink($post->ID) . '" title="Read ' . get_the_title($post->ID).'">';
 			$output .= "Read more";
 			$output .= '</a>';
 
